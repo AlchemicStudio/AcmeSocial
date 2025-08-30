@@ -46,6 +46,7 @@ class CampaignResource extends JsonResource
             'approved_at' => $this->resource->approved_at?->toAtomString(),
             'approved_by' => $this->resource->approved_by,
             'rejected_by' => $this->resource->rejected_by,
+            'rejected_at' => $this->resource->rejected_at?->toAtomString(),
             'rejected_reason' => $this->resource->rejected_reason,
 
             'creator' => $this->whenLoaded('creator', function (User $user) {
