@@ -45,8 +45,6 @@ class Campaign extends Model implements HasMedia
         'end_date',
         'status',
         'creator_id',
-        'cover_image_url',
-        'video_url',
         'approved_at',
         'approved_by',
         'rejected_by',

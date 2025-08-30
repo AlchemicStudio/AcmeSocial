@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Database\Factories\DonationFactory;
+use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,18 +12,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Donation extends Model
+class Transaction extends Model
 {
-    /** @use HasFactory<DonationFactory> */
+    /** @use HasFactory<TransactionFactory> */
     use HasFactory, HasUuids, LogsActivity;
 
-    public const VISIBILITY_PUBLIC = 0;
-    public const VISIBILITY_ANONYMOUS = 1;
-
     public const STATUS_PENDING = 0;
-    public const STATUS_COMPLETED = 1;
-    public const STATUS_FAILED = 2;
-    public const STATUS_REFUNDED = 3;
+    public const STATUS_PROCESSING = 1;
+    public const STATUS_COMPLETED = 2;
+    public const STATUS_FAILED = 3;
+    public const STATUS_CANCELLED = 4;
 
     /**
      * The attributes that are mass assignable.
@@ -31,13 +29,18 @@ class Donation extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'campaign_id',
-        'donor_id',
+        'donation_id',
+        'transaction_reference',
+        'payment_gateway',
+        'gateway_transaction_id',
         'amount',
         'currency',
-        'message',
-        'visibility',
+        'fee_amount',
         'status',
+        'status_message',
+        'processed_at',
+        'request_payload',
+        'response_payload',
     ];
 
     /**
@@ -49,29 +52,21 @@ class Donation extends Model
     {
         return [
             'amount' => 'integer',
-            'visibility' => 'integer',
-            'status' => 'integer',
+            'fee_amount' => 'integer',
+            'processed_at' => 'datetime',
+            'request_payload' => 'array',
+            'response_payload' => 'array',
         ];
     }
 
     /**
-     * Campaign relationship.
+     * Donation relationship.
      *
-     * @return BelongsTo<Campaign, Donation>
+     * @return BelongsTo<Donation, Transaction>
      */
-    public function campaign(): BelongsTo
+    public function donation(): BelongsTo
     {
-        return $this->belongsTo(Campaign::class);
-    }
-
-    /**
-     * Donor relationship.
-     *
-     * @return BelongsTo<User, Donation>
-     */
-    public function donor(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'donor_id');
+        return $this->belongsTo(Donation::class);
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -81,8 +76,8 @@ class Donation extends Model
             ->logOnlyDirty();
     }
 
-    protected static function newFactory(): DonationFactory
+    protected static function newFactory(): TransactionFactory
     {
-        return DonationFactory::new();
+        return TransactionFactory::new();
     }
 }

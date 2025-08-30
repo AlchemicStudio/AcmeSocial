@@ -29,7 +29,6 @@ class StoreDonationRequest extends FormRequest
             'campaign_id' => ['required', 'uuid', 'exists:campaigns,id'],
             'amount' => ['required', 'integer', 'min:1'],
             'currency' => ['sometimes', 'string', 'size:3', 'uppercase'],
-            'anonymous' => ['sometimes', 'boolean'],
             'message' => ['nullable', 'string', 'max:1000'],
             'visibility' => ['sometimes', 'integer', Rule::in([
                 Donation::VISIBILITY_PUBLIC,
@@ -46,7 +45,6 @@ class StoreDonationRequest extends FormRequest
         $this->merge([
             'donor_id' => $this->user()?->id,
             'currency' => $this->currency ?? 'USD',
-            'anonymous' => $this->anonymous ?? false,
             'visibility' => $this->visibility ?? Donation::VISIBILITY_PUBLIC,
             'status' => Donation::STATUS_PENDING,
         ]);

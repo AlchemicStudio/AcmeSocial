@@ -42,8 +42,6 @@ class UpdateCampaignRequest extends FormRequest
             'end_date' => ['sometimes', 'date', 'after_or_equal:start_date'],
             'status' => ['sometimes', 'integer', 'in:'.implode(',', $statusValues)],
             'creator_id' => ['sometimes', 'uuid', 'exists:users,id'],
-            'cover_image_url' => ['nullable', 'url'],
-            'video_url' => ['nullable', 'url'],
             'approved_at' => ['nullable', 'date'],
             'approved_by' => ['nullable', 'uuid', 'exists:users,id'],
             'rejected_by' => ['nullable', 'uuid', 'exists:users,id'],

@@ -30,7 +30,6 @@ class UpdateDonationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'anonymous' => ['sometimes', 'boolean'],
             'message' => ['nullable', 'string', 'max:1000'],
             'visibility' => ['sometimes', 'integer', Rule::in([
                 Donation::VISIBILITY_PUBLIC,

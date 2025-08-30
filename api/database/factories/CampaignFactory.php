@@ -44,8 +44,6 @@ class CampaignFactory extends Factory
             'end_date' => $end->format('Y-m-d'),
             'status' => $status,
             'creator_id' => User::factory(),
-            'cover_image_url' => $this->faker->optional()->imageUrl(1200, 630, 'campaign', true),
-            'video_url' => $this->faker->optional()->url(),
             'approved_at' => in_array($status, [Campaign::STATUS_APPROVED, Campaign::STATUS_COMPLETED], true) ? $this->faker->dateTimeBetween('-1 month', 'now') : null,
             'approved_by' => in_array($status, [Campaign::STATUS_APPROVED, Campaign::STATUS_COMPLETED], true) ? User::factory() : null,
             'rejected_by' => $status === Campaign::STATUS_REJECTED ? User::factory() : null,

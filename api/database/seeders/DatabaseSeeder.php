@@ -27,10 +27,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create additional random users
-        User::factory(8)->create();
+        User::factory(100)->create();
 
         $this->call([
             CampaignSeeder::class,
+            DonationSeeder::class,
+            TransactionSeeder::class,
+            DonationReceiptSeeder::class,
         ]);
     }
 }

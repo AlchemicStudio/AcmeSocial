@@ -40,7 +40,6 @@ class DonationResource extends JsonResource
             'donor_id' => $this->resource->donor_id,
             'amount' => $this->resource->amount,
             'currency' => $this->resource->currency,
-            'anonymous' => $this->resource->anonymous,
             'message' => $this->resource->message,
             'visibility' => $this->resource->visibility,
             'visibility_label' => $visibilityLabels[$this->resource->visibility] ?? null,
@@ -56,7 +55,7 @@ class DonationResource extends JsonResource
                     'current_amount' => $campaign->current_amount,
                 ];
             }),
-            'donor' => $this->when(!$this->resource->anonymous && $this->resource->visibility === Donation::VISIBILITY_PUBLIC, function () {
+            'donor' => $this->when( $this->resource->visibility === Donation::VISIBILITY_PUBLIC, function () {
                 return $this->whenLoaded('donor', function (User $user) {
                     return [
                         'id' => $user->getKey(),

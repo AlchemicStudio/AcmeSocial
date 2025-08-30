@@ -31,7 +31,7 @@ class DonationFactory extends Factory
         $anonymous = $this->faker->boolean(20); // 20% chance of being anonymous
         $visibility = $this->faker->randomElement([
             Donation::VISIBILITY_PUBLIC,
-            Donation::VISIBILITY_PRIVATE,
+            Donation::VISIBILITY_ANONYMOUS,
         ]);
 
         return [
@@ -39,7 +39,6 @@ class DonationFactory extends Factory
             'donor_id' => User::factory(),
             'amount' => $this->faker->numberBetween(500, 50000), // $5 to $500 in cents
             'currency' => $this->faker->randomElement(['USD', 'EUR', 'GBP', 'CAD']),
-            'anonymous' => $anonymous,
             'message' => $anonymous && $this->faker->boolean(70)
                 ? null
                 : $this->faker->optional(0.6)->sentence(),
@@ -99,7 +98,7 @@ class DonationFactory extends Factory
     public function anonymous(): static
     {
         return $this->state(fn (array $attributes) => [
-            'anonymous' => true,
+            'visibility' => Donation::VISIBILITY_ANONYMOUS,
             'message' => null, // Anonymous donations typically don't have messages
         ]);
     }
@@ -120,7 +119,7 @@ class DonationFactory extends Factory
     public function private(): static
     {
         return $this->state(fn (array $attributes) => [
-            'visibility' => Donation::VISIBILITY_PRIVATE,
+            'visibility' => Donation::VISIBILITY_ANONYMOUS,
         ]);
     }
 

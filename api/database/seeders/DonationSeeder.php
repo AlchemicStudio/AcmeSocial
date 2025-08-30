@@ -138,8 +138,5 @@ class DonationSeeder extends Seeder
                 ->recycle($users)
                 ->create(['currency' => $currency]);
         }
-
-        $this->command->info('Created donations for ' . $campaigns->count() . ' campaigns');
-        $this->command->info('Total donations created: ' . Donation::count());
     }
 }

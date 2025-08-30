@@ -21,8 +21,7 @@ class DonationReceiptFactory extends Factory
             'donation_id' => Donation::factory(),
             'receipt_number' => 'RCP-' . $this->faker->unique()->numerify('######'),
             'issued_date' => $this->faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
-            'file_url' => $this->faker->optional(0.8)->url(),
-            'email_sent' => $this->faker->boolean(70),
+            'email_sent_at' => $this->faker->boolean() ? $this->faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d') : null,
         ];
     }
 }
