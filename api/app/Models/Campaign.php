@@ -12,12 +12,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 
-class Campaign extends Model
+class Campaign extends Model implements HasMedia
 {
     /** @use HasFactory<CampaignFactory> */
-    use HasFactory, HasUuids, HasTags, LogsActivity, SoftDeletes;
+    use HasFactory, HasUuids, HasTags, LogsActivity, SoftDeletes, InteractsWithMedia;
 
     public const STATUS_DRAFT = 0;
     public const STATUS_PENDING = 1;
@@ -25,6 +27,9 @@ class Campaign extends Model
     public const STATUS_REJECTED = 3;
     public const STATUS_COMPLETED = 4;
     public const STATUS_CANCELLED = 5;
+
+    public const LOGO_MEDIA_COLLECTION = 'logo';
+    public const OTHER_MEDIA_COLLECTION = 'medias';
 
     /**
      * The attributes that are mass assignable.

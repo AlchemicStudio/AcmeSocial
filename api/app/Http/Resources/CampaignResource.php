@@ -41,8 +41,14 @@ class CampaignResource extends JsonResource
             'status' => $this->resource->status,
             'status_label' => $statusLabels[$this->resource->status] ?? null,
             'creator_id' => $this->resource->creator_id,
-            'cover_image_url' => $this->resource->cover_image_url,
-            'video_url' => $this->resource->video_url,
+            'logo' => $this->resource->getMedia(Campaign::LOGO_MEDIA_COLLECTION)->first()?->getUrl(),
+            'medias' => $this->resource->getMedia(Campaign::OTHER_MEDIA_COLLECTION)->map(function ($media) {
+                return [
+                    'id' => $media->getKey(),
+                    'url' => $media->getUrl(),
+                    'type' => $media->mime_type,
+                ];
+            }),
             'approved_at' => $this->resource->approved_at?->toAtomString(),
             'approved_by' => $this->resource->approved_by,
             'rejected_by' => $this->resource->rejected_by,
