@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\CampaignFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\MediaLibrary\MediaCollections\Models\Concerns\HasUuid;
 use Spatie\Tags\HasTags;
 
 class Campaign extends Model
 {
     /** @use HasFactory<CampaignFactory> */
-    use HasFactory, HasUuid, HasTags, LogsActivity, SoftDeletes;
+    use HasFactory, HasUuids, HasTags, LogsActivity, SoftDeletes;
 
     public const STATUS_DRAFT = 0;
     public const STATUS_PENDING = 1;
