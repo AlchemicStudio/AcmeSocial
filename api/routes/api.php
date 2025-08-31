@@ -27,6 +27,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/campaigns/{campaign}/approve', [CampaignController::class, 'approve']);
     Route::put('/campaigns/{campaign}/reject', [CampaignController::class, 'reject']);
 
+    Route::post('/campaigns/{campaign}/logo', [CampaignController::class, 'uploadLogo']);
+    Route::get('/campaigns/{campaign}/logo', [CampaignController::class, 'getLogo']);
+    Route::put('/campaigns/{campaign}/logo', [CampaignController::class, 'updateLogo']);
+    Route::delete('/campaigns/{campaign}/logo', [CampaignController::class, 'deleteLogo']);
+
+    Route::post('/campaigns/{campaign}/media', [CampaignController::class, 'uploadMedia']);
+    Route::get('/campaigns/{campaign}/media', [CampaignController::class, 'listMedia']);
+    Route::get('/campaigns/{campaign}/media/{media}', [CampaignController::class, 'getMedia']);
+    Route::put('/campaigns/{campaign}/media/{media}', [CampaignController::class, 'updateMedia']);
+    Route::delete('/campaigns/{campaign}/media/{media}', [CampaignController::class, 'deleteMedia']);
+
     Route::apiResource('donations', DonationController::class);
 
     Route::get('/transactions', [TransactionController::class, 'index']);
