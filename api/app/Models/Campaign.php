@@ -98,11 +98,76 @@ class Campaign extends Model implements HasMedia
         return $this->belongsTo(User::class, 'rejected_by');
     }
 
+    /**
+     * Campaign donations relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Donation>
+     */
+    public function donations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Donation::class);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logAll()
             ->logOnlyDirty();
+    }
+
+    /**
+     * Get statistics for completed donations in this campaign.
+     *
+     * @return array<string, mixed>
+     */
+    public function getStatistics(): array
+    {
+        $completedDonations = $this->donations()
+            ->where('status', Donation::STATUS_COMPLETED)
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as quantity, SUM(amount) as amount')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        if ($completedDonations->isEmpty()) {
+            return [
+                'labels' => [],
+                'datasets' => [
+                    [
+                        'label' => 'Daily Quantity',
+                        'data' => []
+                    ],
+                    [
+                        'label' => 'Daily Amount',
+                        'data' => []
+                    ]
+                ]
+            ];
+        }
+
+        $labels = [];
+        $quantities = [];
+        $amounts = [];
+
+        foreach ($completedDonations as $donation) {
+            $labels[] = $donation->date;
+            $quantities[] = (int) $donation->quantity;
+            $amounts[] = (int) $donation->amount;
+        }
+
+        return [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Daily Quantity',
+                    'data' => $quantities
+                ],
+                [
+                    'label' => 'Daily Amount',
+                    'data' => $amounts
+                ]
+            ]
+        ];
     }
 
     protected static function newFactory(): CampaignFactory
