@@ -1,3 +1,50 @@
 {
-  "hello": "Hello world!"
+  "hello": "Hello world!",
+  "app": {
+    "name": "AcmeSocial"
+  },
+  "topbar": {
+    "login": "Sign In",
+    "createCampaign": "Create Campaign",
+    "profile": "Profile",
+    "admin": "Admin"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "submit": "Sign In",
+      "switchToRegister": "Don't have an account? Sign up",
+      "forgotPassword": "Forgot password?"
+    },
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email must be valid",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "tooManyAttempts": "Too many login attempts. Please try again later",
+      "loginFailed": "Login failed. Please try again"
+    }
+  },
+  "pages": {
+    "login": {
+      "site_name": "AcmeSocial",
+      "welcome": "Welcome to AcmeSocial!"
+    }
+  },
+  "components": {
+    "panels": {
+      "admin_menu": {
+        "campaigns": "Campaigns",
+        "users": "Users",
+        "settings": "Settings",
+        "donations": "Donations"
+      }
+    }
+  }
 }

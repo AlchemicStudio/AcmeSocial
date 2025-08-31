@@ -1,3 +1,6 @@
 <template lang="pug">
-  slot
+v-app
+  PanelsTopBar
+  v-main
+    slot
 </template>
