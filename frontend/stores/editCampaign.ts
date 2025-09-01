@@ -248,7 +248,7 @@ export const useEditCampaignStore = defineStore('editCampaign', {
           throw new Error(error.value?.message || 'Failed to create campaign')
         }
 
-        this.currentCampaign = data.value as CampaignResponse
+        this.currentCampaign = data.value.data as CampaignResponse
         return true
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to create campaign'
@@ -263,6 +263,12 @@ export const useEditCampaignStore = defineStore('editCampaign', {
 
     // Step 2a: Upload campaign logo
     async uploadLogo() {
+        console.log("campaign", this.currentCampaign)
+        console.log(
+            "logoFile",
+            this.logoFile
+        )
+
       if (!this.currentCampaign) {
         this.logoError = 'Campaign must be created before uploading logo'
         return false
@@ -326,6 +332,11 @@ export const useEditCampaignStore = defineStore('editCampaign', {
         this.mediaError = 'Campaign must be created before uploading media'
         return false
       }
+        console.log("campaign", this.currentCampaign)
+        console.log(
+            "logoFile",
+            this.logoFile
+        )
 
       if (this.mediaFiles.length === 0) {
         return true // No media to upload is not an error

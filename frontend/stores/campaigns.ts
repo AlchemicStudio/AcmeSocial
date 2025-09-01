@@ -140,7 +140,8 @@ export const useCampaignsStore = defineStore('campaigns', {
   actions: {
     // Fetch campaigns with optional filters and pagination
     async fetchCampaigns(params: CampaignQueryParams = {}) {
-      this.loading = true
+        console.log("params: ", params)
+        this.loading = true
       this.error = null
       
       try {
