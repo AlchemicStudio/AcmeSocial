@@ -14,6 +14,7 @@ export interface CreateUserRequest {
   name: string
   email: string
   password: string
+  confirm_password: string
   is_admin: boolean
 }
 
@@ -115,6 +116,12 @@ interface AdminState {
     total: number
   } | null
 
+  // Permissions management
+  permissions: Permission[]
+  userPermissions: UserPermissions[] | []
+  permissionsLoading: boolean
+  permissionsError: string | null
+
   // Campaigns management  
   campaigns: AdminCampaign[]
   currentCampaign: AdminCampaign | null
@@ -149,6 +156,12 @@ export const useAdminStore = defineStore('admin', {
     usersError: null,
     usersPagination: null,
 
+    // Permissions
+    permissions: [],
+    userPermissions: [],
+    permissionsLoading: false,
+    permissionsError: null,
+
     // Campaigns
     campaigns: [],
     currentCampaign: null,
@@ -179,7 +192,7 @@ export const useAdminStore = defineStore('admin', {
     pendingDonations: (state) => state.donations.filter(donation => donation.status === 0),
 
     // Loading states
-    isLoading: (state) => state.usersLoading || state.campaignsLoading || state.donationsLoading
+    isLoading: (state) => state.usersLoading || state.campaignsLoading || state.donationsLoading || state.permissionsLoading
   },
 
   actions: {
@@ -307,18 +320,27 @@ export const useAdminStore = defineStore('admin', {
 
     // User permissions management
     async fetchUserPermissions(userId: UUID) {
+      this.permissionsLoading = true
+      this.permissionsError = null
+
       try {
         const client = useSanctumClient()
+
         const { data } = await client(`/api/users/${userId}/permissions`, {
           method: 'GET',
           headers: { Accept: 'application/json' }
         })
-        
+
+          console.log('User permissions:', data)
+          console.log('All user permissions:', this.userPermissions)
+        this.userPermissions[data.user_id] = data.all_permissions
         return data
       } catch (error) {
-        this.usersError = (error as Error).message || 'Failed to fetch user permissions'
+        this.permissionsError = (error as Error).message || 'Failed to fetch user permissions'
         console.error('Error fetching user permissions:', error)
         throw error
+      } finally {
+        this.permissionsLoading = false
       }
     },
 
@@ -578,6 +600,9 @@ export const useAdminStore = defineStore('admin', {
 
     // Permissions management
     async fetchAllPermissions() {
+      this.permissionsLoading = true
+      this.permissionsError = null
+
       try {
         const client = useSanctumClient()
         const { data } = await client('/api/permissions', {
@@ -585,11 +610,14 @@ export const useAdminStore = defineStore('admin', {
           headers: { Accept: 'application/json' }
         })
         
+        this.permissions = data
         return data
       } catch (error) {
-        this.usersError = (error as Error).message || 'Failed to fetch permissions'
+        this.permissionsError = (error as Error).message || 'Failed to fetch permissions'
         console.error('Error fetching permissions:', error)
         throw error
+      } finally {
+        this.permissionsLoading = false
       }
     },
 
@@ -633,6 +661,7 @@ export const useAdminStore = defineStore('admin', {
       this.usersError = null
       this.campaignsError = null
       this.donationsError = null
+      this.permissionsError = null
     },
 
     // Reset store

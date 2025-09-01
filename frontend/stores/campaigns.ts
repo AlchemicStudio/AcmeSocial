@@ -133,7 +133,7 @@ export const useCampaignsStore = defineStore('campaigns', {
     // Check if any loading state is active
     isLoading: (state) => {
       return state.loading || state.loadingCampaign || state.creating || 
-             state.updating || state.deleting || state.approving || state.rejecting
+             state.deleting || state.approving || state.rejecting
     }
   },
 
@@ -177,7 +177,12 @@ export const useCampaignsStore = defineStore('campaigns', {
         }
         
         const response = data.value as CampaignsResponse
-        
+        if (response === null) {
+            console.log(status, 'status')
+            console.log("response: ", response)
+            this.loading = false
+            return response
+        }
         this.campaigns = response.data
         this.currentPage = response.meta.current_page
         this.totalPages = response.meta.last_page
@@ -221,7 +226,7 @@ export const useCampaignsStore = defineStore('campaigns', {
           throw new Error(error.value?.message || 'Failed to fetch campaign')
         }
         
-        const campaign = data.value as GetCampaignResponse
+        const campaign = data.value.data as GetCampaignResponse
         this.currentCampaign = campaign
         
         // Update campaign in campaigns list if it exists

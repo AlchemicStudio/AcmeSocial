@@ -210,9 +210,10 @@ const campaignsStore = useCampaignsStore()
 const showDonationDialog = ref(false)
 
 // Computed Properties
-const campaign = computed((): Campaign | undefined => {
-  return campaignsStore.campaigns.find(c => c.id === props.uuid)
-})
+// const campaign = computed((): Campaign | undefined => {
+//   return campaignsStore.campaigns.find(c => c.id === props.uuid)
+// })
+const campaign = ref<Campaign | undefined>()
 
 const progressPercentage = computed((): number => {
   if (!campaign.value) return 0
@@ -335,14 +336,15 @@ const fetchCampaign = async (): Promise<void> => {
 }
 
 // Lifecycle
-onMounted(() => {
-  fetchCampaign()
+onMounted(async () => {
+  await fetchCampaign()
+  campaign.value = campaignsStore.campaigns.find(c => c.id === props.uuid)
 })
 
 // Watch for UUID changes
-watch(() => props.uuid, (newUuid) => {
+watch(() => props.uuid, async (newUuid) => {
   if (newUuid) {
-    fetchCampaign()
+    await fetchCampaign()
   }
 })
 </script>

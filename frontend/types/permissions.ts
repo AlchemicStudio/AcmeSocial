@@ -47,7 +47,8 @@ export interface ListPermissionsResponse {
 // Available permission names in the system
 export type PermissionName = 
   | 'manage campaigns'
-  | 'manage donations';
+  | 'manage donations'
+  | 'manage users';
 
 // Permission guard names
 export type PermissionGuard = 'web';

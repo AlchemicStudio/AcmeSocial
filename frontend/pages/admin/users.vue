@@ -1,8 +1,11 @@
 <template lang="pug">
-h1 Admin Users
+div
+  AdminUsersManager
 </template>
 
 <script setup lang="ts">
+import AdminUsersManager from '~/components/admin/UsersManager.vue'
+
 definePageMeta({
   middleware: ['sanctum:auth'],
   layout: 'administration',
