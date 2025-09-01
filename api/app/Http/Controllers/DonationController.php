@@ -124,6 +124,7 @@ class DonationController extends Controller
             [
                 'campaign_id' => $campaign->id,
                 'donor_id' => Auth::id(),
+                'currency' => 'USD'
             ]
         ));
 

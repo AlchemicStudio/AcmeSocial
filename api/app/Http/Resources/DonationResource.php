@@ -31,7 +31,7 @@ class DonationResource extends JsonResource
 
         $visibilityLabels = [
             Donation::VISIBILITY_PUBLIC => 'public',
-            Donation::VISIBILITY_PRIVATE => 'private',
+            Donation::VISIBILITY_ANONYMOUS => 'private',
         ];
 
         return [

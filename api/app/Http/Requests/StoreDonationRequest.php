@@ -26,9 +26,7 @@ class StoreDonationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'campaign_id' => ['required', 'uuid', 'exists:campaigns,id'],
             'amount' => ['required', 'integer', 'min:1'],
-            'currency' => ['sometimes', 'string', 'size:3', 'uppercase'],
             'message' => ['nullable', 'string', 'max:1000'],
             'visibility' => ['sometimes', 'integer', Rule::in([
                 Donation::VISIBILITY_PUBLIC,
