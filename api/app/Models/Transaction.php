@@ -62,7 +62,7 @@ class Transaction extends Model
     /**
      * Donation relationship.
      *
-     * @return BelongsTo<Donation, Transaction>
+     * @return BelongsTo<Donation, $this>
      */
     public function donation(): BelongsTo
     {

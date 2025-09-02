@@ -37,6 +37,12 @@
       "welcome": "Welcome to AcmeSocial!"
     }
   },
+  "common": {
+    "refresh": "Refresh",
+    "previous": "Previous",
+    "next": "Next",
+    "cancel": "Cancel"
+  },
   "components": {
     "panels": {
       "admin_menu": {
@@ -44,6 +50,48 @@
         "users": "Users",
         "settings": "Settings",
         "donations": "Donations"
+      }
+    },
+    "admin": {
+      "donations": {
+        "title": "Donations Management",
+        "headers": {
+          "campaignName": "Campaign Name",
+          "userName": "User Name",
+          "amount": "Amount",
+          "creationDate": "Creation Date",
+          "actions": "Actions"
+        },
+        "actions": {
+          "refund": "Refund",
+          "delete": "Delete"
+        },
+        "loading": "Loading donations...",
+        "empty": "No donations found",
+        "dialogs": {
+          "refundTitle": "Refund Donation",
+          "refundMessage": "Are you sure you want to refund this donation? This action cannot be undone.",
+          "deleteTitle": "Delete Donation",
+          "deleteMessage": "Are you sure you want to permanently delete this donation? This action cannot be undone."
+        }
+      },
+      "campaigns": {
+        "actions": {
+          "viewStatistics": "View Statistics"
+        },
+        "statistics": {
+          "title": "Campaign Statistics",
+          "loading": "Loading statistics...",
+          "noData": "No statistics data available for this campaign.",
+          "error": "Failed to load statistics.",
+          "axis": {
+            "date": "Date",
+            "amount": "Amount"
+          },
+          "series": {
+            "raised": "Amount Raised"
+          }
+        }
       }
     }
   }

@@ -57,7 +57,7 @@ class Donation extends Model
     /**
      * Campaign relationship.
      *
-     * @return BelongsTo<Campaign, Donation>
+     * @return BelongsTo<Campaign, $this>
      */
     public function campaign(): BelongsTo
     {
@@ -67,7 +67,7 @@ class Donation extends Model
     /**
      * Donor relationship.
      *
-     * @return BelongsTo<User, Donation>
+     * @return BelongsTo<User, $this>
      */
     public function donor(): BelongsTo
     {

@@ -19,15 +19,29 @@ class DonationController extends Controller
     /**
      * Display a listing of donations (only for "manage donations" permission).
      */
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         if (!$user->can('manage donations') && !$user->is_admin) {
             abort(Response::HTTP_FORBIDDEN, 'You do not have permission to view all donations.');
         }
 
-        $donations = Donation::with(['campaign', 'donor'])->paginate(15);
+        $query = Donation::query()->with(['campaign', 'donor']);
+
+        if ($request->filled('donor_id')) {
+            $query->where('donor_id', $request->query('donor_id'));
+        }
+
+        if ($request->filled('campaign_id')) {
+            $query->where('campaign_id', $request->query('campaign_id'));
+        }
+
+        $donations = $query->paginate(15);
 
         return DonationResource::collection($donations);
     }
@@ -38,6 +52,10 @@ class DonationController extends Controller
     public function store(StoreDonationRequest $request): DonationResource
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         if (!$user->can('manage donations') && !$user->is_admin) {
             abort(Response::HTTP_FORBIDDEN, 'You do not have permission to create donations.');
@@ -60,6 +78,10 @@ class DonationController extends Controller
     {
         $user = Auth::user();
 
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
         if (!$user->can('manage donations') && !$user->is_admin) {
             abort(Response::HTTP_FORBIDDEN, 'You do not have permission to view this donation.');
         }
@@ -73,6 +95,10 @@ class DonationController extends Controller
     public function update(UpdateDonationRequest $request, Donation $donation): DonationResource
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         if (!$user->can('manage donations') && !$user->is_admin) {
             abort(Response::HTTP_FORBIDDEN, 'You do not have permission to update this donation.');
@@ -94,6 +120,10 @@ class DonationController extends Controller
     public function destroy(Donation $donation): Response
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         if (!$user->can('manage donations') && !$user->is_admin) {
             abort(Response::HTTP_FORBIDDEN, 'You do not have permission to delete this donation.');
@@ -142,6 +172,11 @@ class DonationController extends Controller
     public function campaignDonations(Campaign $campaign): AnonymousResourceCollection
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
         $query = $campaign->donations();
 
         // Users can only see their own donations unless they have "manage donations" permission
@@ -160,6 +195,10 @@ class DonationController extends Controller
     public function campaignDonation(Campaign $campaign, Donation $donation): DonationResource
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         // Check if donation belongs to this campaign
         if ($donation->campaign_id !== $campaign->id) {

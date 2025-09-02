@@ -32,7 +32,7 @@ class DonationSeeder extends Seeder
         // Create various donation scenarios
         foreach ($campaigns as $campaign) {
             // Create multiple donations for each campaign
-            $donationCount = fake()->numberBetween(2, 8);
+            $donationCount = fake()->numberBetween(20, 1000);
 
             for ($i = 0; $i < $donationCount; $i++) {
                 $donor = $users->random();

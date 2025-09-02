@@ -7,6 +7,7 @@ namespace App\Http\Requests;
 use App\Models\Donation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Http\Response;
 
 class UpdateDonationRequest extends FormRequest
 {
@@ -15,10 +16,14 @@ class UpdateDonationRequest extends FormRequest
      */
     public function authorize(): bool
     {
+
+        if ($this->user() === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
         $donation = $this->route('donation');
 
-        return $this->user() !== null &&
-               ($this->user()->can('update', $donation) ||
+        return ($this->user()->can('update', $donation) ||
                 $this->user()->id === $donation->donor_id);
     }
 

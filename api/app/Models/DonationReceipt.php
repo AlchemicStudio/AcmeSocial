@@ -49,7 +49,7 @@ class DonationReceipt extends Model implements HasMedia
     /**
      * Donation relationship.
      *
-     * @return BelongsTo<Donation, DonationReceipt>
+     * @return BelongsTo<Donation, $this>
      */
     public function donation(): BelongsTo
     {

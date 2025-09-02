@@ -36,8 +36,8 @@ class CampaignResource extends JsonResource
             'description' => $this->resource->description,
             'goal_amount' => $this->resource->goal_amount,
             'current_amount' => $this->resource->current_amount,
-            'start_date' => $this->resource->start_date?->toDateString(),
-            'end_date' => $this->resource->end_date?->toDateString(),
+            'start_date' => $this->resource->start_date,
+            'end_date' => $this->resource->end_date,
             'status' => $this->resource->status,
             'status_label' => $statusLabels[$this->resource->status] ?? null,
             'creator_id' => $this->resource->creator_id,
@@ -49,10 +49,10 @@ class CampaignResource extends JsonResource
                     'type' => $media->mime_type,
                 ];
             }),
-            'approved_at' => $this->resource->approved_at?->toAtomString(),
+            'approved_at' => $this->resource->approved_at,
             'approved_by' => $this->resource->approved_by,
             'rejected_by' => $this->resource->rejected_by,
-            'rejected_at' => $this->resource->rejected_at?->toAtomString(),
+            'rejected_at' => $this->resource->rejected_at,
             'rejected_reason' => $this->resource->rejected_reason,
 
             'creator' => $this->whenLoaded('creator', function (User $user) {

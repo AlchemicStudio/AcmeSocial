@@ -21,10 +21,14 @@ class CampaignController extends Controller
     /**
      * Display a listing of campaigns.
      */
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): JsonResponse | AnonymousResourceCollection
     {
         $user = Auth::user();
         $query = Campaign::query();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         // Base query: show approved campaigns for regular users
         if (!$user->can('manage campaigns') && !$user->is_admin) {
@@ -40,11 +44,15 @@ class CampaignController extends Controller
         }
 
         // Add filtering and searching
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->get('status'));
         }
 
-        if ($request->has('search')) {
+        if ($request->filled('creator_id')) {
+            $query->where('creator_id', $request->get('creator_id'));
+        }
+
+        if ($request->filled('search')) {
             $search = $request->get('search');
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', '%' . $search . '%')
@@ -78,9 +86,13 @@ class CampaignController extends Controller
     /**
      * Display the specified campaign.
      */
-    public function show(Campaign $campaign): CampaignResource
+    public function show(Campaign $campaign): CampaignResource | JsonResponse
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         // Check if user can view this campaign
         if ($campaign->status !== Campaign::STATUS_APPROVED) {
@@ -97,9 +109,13 @@ class CampaignController extends Controller
     /**
      * Update the specified campaign.
      */
-    public function update(UpdateCampaignRequest $request, Campaign $campaign): CampaignResource
+    public function update(UpdateCampaignRequest $request, Campaign $campaign): CampaignResource | JsonResponse
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         // Check authorization
         if (!$user->can('manage campaigns') && !$user->is_admin) {
@@ -123,9 +139,13 @@ class CampaignController extends Controller
     /**
      * Remove the specified campaign.
      */
-    public function destroy(Campaign $campaign): Response
+    public function destroy(Campaign $campaign): Response | JsonResponse
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         // Check authorization
         if (!$user->can('manage campaigns') && !$user->is_admin) {
@@ -149,9 +169,13 @@ class CampaignController extends Controller
     /**
      * Get campaign statistics.
      */
-    public function statistics(Campaign $campaign): array
+    public function statistics(Campaign $campaign): array | JsonResponse
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         if (!$user->can('manage campaigns') && !$user->is_admin) {
             abort(Response::HTTP_FORBIDDEN, 'You do not have permission to view campaign statistics.');
@@ -170,9 +194,13 @@ class CampaignController extends Controller
     /**
      * Approve a campaign.
      */
-    public function approve(Campaign $campaign): CampaignResource
+    public function approve(Campaign $campaign): CampaignResource | JsonResponse
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         if (!$user->can('manage campaigns') && !$user->is_admin) {
             abort(Response::HTTP_FORBIDDEN, 'You do not have permission to approve campaigns.');
@@ -195,9 +223,13 @@ class CampaignController extends Controller
     /**
      * Reject a campaign.
      */
-    public function reject(Request $request, Campaign $campaign): CampaignResource
+    public function reject(Request $request, Campaign $campaign): CampaignResource | JsonResponse
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         if (!$user->can('manage campaigns') && !$user->is_admin) {
             abort(Response::HTTP_FORBIDDEN, 'You do not have permission to reject campaigns.');
@@ -510,9 +542,13 @@ class CampaignController extends Controller
     /**
      * Check if user has permission to view campaign.
      */
-    private function checkCampaignViewPermission(Campaign $campaign): void
+    private function checkCampaignViewPermission(Campaign $campaign): null
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         // Check if user can view this campaign
         if ($campaign->status !== Campaign::STATUS_APPROVED) {
@@ -522,18 +558,25 @@ class CampaignController extends Controller
                 abort(Response::HTTP_FORBIDDEN, 'You cannot view this campaign.');
             }
         }
+        return null;
     }
 
     /**
      * Check if user has permission to manage campaign media.
      */
-    private function checkCampaignMediaPermission(Campaign $campaign): void
+    private function checkCampaignMediaPermission(Campaign $campaign): null
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         // Check authorization - only campaign creators, admins, or users with manage campaigns permission can manage media
         if (!$user->can('manage campaigns') && !$user->is_admin && $campaign->creator_id !== $user->id) {
             abort(Response::HTTP_FORBIDDEN, 'You cannot manage media for this campaign.');
         }
+
+        return null;
     }
 }

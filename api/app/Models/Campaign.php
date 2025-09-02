@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -71,7 +72,7 @@ class Campaign extends Model implements HasMedia
     /**
      * Campaign creator relationship.
      *
-     * @return BelongsTo<User, Campaign>
+     * @return BelongsTo<User, $this>
      */
     public function creator(): BelongsTo
     {
@@ -81,7 +82,7 @@ class Campaign extends Model implements HasMedia
     /**
      * Campaign approver relationship.
      *
-     * @return BelongsTo<User, Campaign>
+     * @return BelongsTo<User, $this>
      */
     public function approver(): BelongsTo
     {
@@ -91,7 +92,7 @@ class Campaign extends Model implements HasMedia
     /**
      * Campaign rejector relationship.
      *
-     * @return BelongsTo<User, Campaign>
+     * @return BelongsTo<User, $this>
      */
     public function rejector(): BelongsTo
     {
@@ -101,9 +102,9 @@ class Campaign extends Model implements HasMedia
     /**
      * Campaign donations relationship.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Donation>
+     * @return HasMany<Donation>
      */
-    public function donations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function donations(): HasMany
     {
         return $this->hasMany(Donation::class);
     }

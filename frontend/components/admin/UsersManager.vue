@@ -69,6 +69,21 @@ div
               )
                 v-icon(start) mdi-delete
                 | Delete
+      // Pagination Controls
+      div(class="d-flex justify-end align-center mt-4" v-if="hasPagination")
+        v-btn(
+          :disabled="isLoading || !hasPrev"
+          variant="outlined"
+          class="mr-2"
+          prepend-icon="mdi-chevron-left"
+          @click="goToPrevPage"
+        ) {{ $t('common.previous') }}
+        v-btn(
+          :disabled="isLoading || !hasNext"
+          variant="outlined"
+          append-icon="mdi-chevron-right"
+          @click="goToNextPage"
+        ) {{ $t('common.next') }}
 
   // Add User Dialog
   v-dialog(v-model="addUserDialog" max-width="600px")
@@ -121,15 +136,34 @@ const isProcessing = ref(false)
 // Computed properties
 const users = computed(() => adminStore.users || [])
 const isLoading = computed(() => adminStore.isLoading)
+const pagination = computed(() => adminStore.usersPagination)
+const currentPage = computed(() => pagination.value?.current_page ?? 1)
+const perPage = computed(() => pagination.value?.per_page ?? undefined)
+const hasPagination = computed(() => !!pagination.value && pagination.value.last_page > 1)
+const hasPrev = computed(() => (pagination.value?.current_page ?? 1) > 1)
+const hasNext = computed(() => {
+  if (!pagination.value) return false
+  return pagination.value.current_page < pagination.value.last_page
+})
 
 // Methods
 const refreshUsers = async () => {
   try {
-    await adminStore.fetchUsers({})
+    await adminStore.fetchUsers({ page: currentPage.value, per_page: perPage.value })
   } catch (error) {
     console.error('Failed to fetch users:', error)
     // In a real app, you'd show a toast notification here
   }
+}
+
+const goToPrevPage = async () => {
+  if (!hasPrev.value) return
+  await adminStore.fetchUsers({ page: currentPage.value - 1, per_page: perPage.value })
+}
+
+const goToNextPage = async () => {
+  if (!hasNext.value) return
+  await adminStore.fetchUsers({ page: currentPage.value + 1, per_page: perPage.value })
 }
 
 const handlePermissions = (userId: UUID) => {

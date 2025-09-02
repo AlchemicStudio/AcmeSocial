@@ -473,12 +473,26 @@ export const useAdminStore = defineStore('admin', {
     async fetchCampaignStatistics(campaignId: UUID) {
       try {
         const client = useSanctumClient()
-        const { data } = await client(`/api/campaigns/${campaignId}/statistics`, {
-          method: 'GET',
-          headers: { Accept: 'application/json' }
-        })
-        
-        return data
+        const { data, status, error, refresh } = await useAsyncData('fetch_stat_for' + campaignId, () => {
+            console.log('stat reqUESt')
+            return client(`/api/campaigns/${campaignId}/statistics`, {
+                  method: 'GET',
+                  headers: { Accept: 'application/json' }
+            })
+          }
+        );
+        if (status.value === 'idle') {
+            await refresh()
+        }
+        if (status.value === 'error') {
+            console.error('Error fetching campaign statistics:', error.value)
+            return null
+        }
+        if (status.value === 'success' && data.value) {
+            console.log('Campaign statistics:', data.value)
+            return data.value
+        }
+        return data.value
       } catch (error) {
         this.campaignsError = (error as Error).message || 'Failed to fetch campaign statistics'
         console.error('Error fetching campaign statistics:', error)
@@ -493,7 +507,8 @@ export const useAdminStore = defineStore('admin', {
 
       try {
         const client = useSanctumClient()
-        const { data, status } = await useAsyncData('admin.donations', () =>
+        const key = `admin.donations.${(params as BaseQueryParams).page || 1}.${(params as BaseQueryParams).per_page || ''}`
+        const { data, status } = await useAsyncData(key, () =>
           client('/api/donations', {
             method: 'GET',
             params,
@@ -570,6 +585,30 @@ export const useAdminStore = defineStore('admin', {
       } catch (error) {
         this.donationsError = (error as Error).message || 'Failed to delete donation'
         console.error('Error deleting donation:', error)
+        throw error
+      }
+    },
+
+    async refundDonation(donationId: UUID) {
+      try {
+        const client = useSanctumClient()
+        const { data } = await client(`/api/donations/${donationId}/refund`, {
+          method: 'POST',
+          headers: { Accept: 'application/json' }
+        })
+
+        // Update donation status in state
+        const idx = this.donations.findIndex(d => d.id === donationId)
+        if (idx !== -1) {
+          this.donations[idx] = {
+            ...this.donations[idx],
+            ...(data || {}),
+          }
+        }
+        return data
+      } catch (error) {
+        this.donationsError = (error as Error).message || 'Failed to refund donation'
+        console.error('Error refunding donation:', error)
         throw error
       }
     },

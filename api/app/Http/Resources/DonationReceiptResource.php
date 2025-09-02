@@ -18,14 +18,14 @@ class DonationReceiptResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'donation_id' => $this->donation_id,
-            'receipt_number' => $this->receipt_number,
-            'issued_date' => $this->issued_date->format('Y-m-d'),
-            'file_url' => $this->getMedia(DonationReceipt::RECEIPT_MEDIA_COLLECTION)->first()?->getUrl(),
-            'email_sent_at' => $this->email_sent,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'id' => $this->resource->id,
+            'donation_id' => $this->resource->donation_id,
+            'receipt_number' => $this->resource->receipt_number,
+            'issued_date' => $this->resource->issued_date->format('Y-m-d'),
+            'file_url' => $this->resource->getMedia(DonationReceipt::RECEIPT_MEDIA_COLLECTION)->first()?->getUrl(),
+            'email_sent_at' => $this->resource->email_sent,
+            'created_at' => $this->resource->created_at,
+            'updated_at' => $this->resource->updated_at,
             'donation' => new DonationResource($this->whenLoaded('donation')),
         ];
     }

@@ -140,10 +140,8 @@ export const useCampaignsStore = defineStore('campaigns', {
   actions: {
     // Fetch campaigns with optional filters and pagination
     async fetchCampaigns(params: CampaignQueryParams = {}) {
-        console.log("params: ", params)
-        this.loading = true
+      this.loading = true
       this.error = null
-      
       try {
         const client = useSanctumClient()
         
@@ -151,14 +149,14 @@ export const useCampaignsStore = defineStore('campaigns', {
         const queryParams = new URLSearchParams()
         
         if (params.status !== undefined) queryParams.append('status', params.status.toString())
-        if (params.creator_id) queryParams.append('creator_id', params.creator_id)
-        if (params.per_page) queryParams.append('per_page', params.per_page.toString())
-        if (params.page) queryParams.append('page', params.page.toString())
+        if (params.creator_id !== undefined) queryParams.append('creator_id', params.creator_id)
+        if (params.per_page !== undefined) queryParams.append('per_page', params.per_page.toString())
+        if (params.page !== undefined) queryParams.append('page', params.page.toString())
         
         const queryString = queryParams.toString()
         const url = `/api/campaigns${queryString ? `?${queryString}` : ''}`
-        
-        const { data, status, error } = await useAsyncData('campaigns', () =>
+
+        const { data, status, error, refresh } = await useAsyncData('campaigns', () =>
           client(url, {
             headers: {
               Accept: "application/json",
@@ -169,6 +167,7 @@ export const useCampaignsStore = defineStore('campaigns', {
         
         // Wait for the request to complete
         while (status.value === 'idle') {
+          await refresh()
           await new Promise(resolve => setTimeout(resolve, 10))
         }
         

@@ -49,6 +49,7 @@ class DonationFactory extends Factory
                 Donation::STATUS_FAILED,
                 Donation::STATUS_REFUNDED,
             ]),
+
         ];
     }
 

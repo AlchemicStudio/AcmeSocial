@@ -88,6 +88,29 @@ div
                 v-icon(start) mdi-delete
                 | Delete
 
+              v-btn(
+                :to="{ name: 'admin-campaigns-id-statistics', params: { id: campaign.id } }"
+                variant="outlined"
+                size="small"
+                prepend-icon="mdi-chart-line"
+                class="ml-1"
+              ) {{ $t('components.admin.campaigns.actions.viewStatistics') }}
+          tr(v-if="campaigns.length > 0")
+            td(colspan="3")
+              .d-flex.justify-space-between.mt-4
+                v-btn(
+                  @click="goToPreviousPage"
+                  :disabled="!hasPreviousPage || isLoading"
+                  variant="outlined"
+                  prepend-icon="mdi-chevron-left"
+                ) {{ $t('common.previous') }}
+                v-btn(
+                  @click="goToNextPage"
+                  :disabled="!hasNextPage || isLoading"
+                  variant="outlined"
+                  append-icon="mdi-chevron-right"
+                ) {{ $t('common.next') }}
+
   // Reject Dialog
   v-dialog(v-model="rejectDialog" max-width="500px")
     v-card
@@ -165,6 +188,25 @@ const isProcessing = ref(false)
 // Computed properties
 const campaigns = computed(() => campaignsStore.campaigns || [])
 const isLoading = computed(() => campaignsStore.isLoading || adminStore.isLoading)
+const hasNextPage = computed(() => campaignsStore.hasNextPage)
+const hasPreviousPage = computed(() => campaignsStore.hasPreviousPage)
+
+// Methods
+const goToPreviousPage = async () => {
+  try {
+    await campaignsStore.previousPage()
+  } catch (error) {
+    console.error('Failed to load previous campaigns page:', error)
+  }
+}
+
+const goToNextPage = async () => {
+  try {
+    await campaignsStore.nextPage()
+  } catch (error) {
+    console.error('Failed to load next campaigns page:', error)
+  }
+}
 
 // Methods
 const refreshCampaigns = async () => {

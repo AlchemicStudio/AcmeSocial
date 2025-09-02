@@ -12,10 +12,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum');
-    }
 
     /**
      * Display a listing of transactions (only for "manage donations" permission).
@@ -23,6 +19,10 @@ class TransactionController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $user = Auth::user();
+
+        if ($user === null) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
         if (!$user->can('manage donations') && !$user->is_admin) {
             abort(Response::HTTP_FORBIDDEN, 'You do not have permission to view transactions.');

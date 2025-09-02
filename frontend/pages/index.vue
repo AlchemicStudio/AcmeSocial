@@ -21,6 +21,7 @@ definePageMeta({
 const campaignStore = useCampaignsStore()
 
 onMounted(async () => {
-  await campaignStore.fetchCampaigns()
+  console.log('Mounted')
+  await campaignStore.fetchCampaigns({})
 })
 </script>
